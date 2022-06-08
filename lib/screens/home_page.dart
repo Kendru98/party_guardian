@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:party_guardian/models/alcohol_model.dart';
 import 'package:party_guardian/models/userdata.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -31,12 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(
-          colors: [Color(0xff3f51b5), Color(0xff9c27b0)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        )),
+        color: Color(0xff7046e0),
         child: Column(
           children: [
             Padding(padding: EdgeInsets.only(top: 80)),
@@ -45,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Text('Kobieta'),
+                    Text('Kobieta',
+                        style: Theme.of(context).textTheme.headline1),
                     Radio(
                       value: gender[0],
                       groupValue: select,
@@ -59,7 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Row(
                   children: [
-                    Text('Mężczyzna'),
+                    Text('Mężczyzna',
+                        style: Theme.of(context).textTheme.headline1),
                     Radio(
                       value: gender[1],
                       groupValue: select,
@@ -76,17 +74,19 @@ class _HomeScreenState extends State<HomeScreen> {
             //Columna
             Container(
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color.fromARGB(255, 17, 94, 131),
-                ),
-              ),
-              height: 50,
+                  border: Border.all(
+                    color: Color(0xff255EDA),
+                  ),
+                  color: Color(0xffF6F4FB)),
+              height: 40,
               margin: const EdgeInsets.only(bottom: 10),
               width: 100,
               child: TextFormField(
-                decoration: const InputDecoration(
+                style: Theme.of(context).textTheme.headline2,
+                decoration: InputDecoration(
+                    suffixText: 'kg',
                     labelText: 'Waga',
-                    labelStyle: TextStyle(color: Colors.white)),
+                    labelStyle: Theme.of(context).textTheme.headline3),
                 controller: controllerweight,
               ),
             ),
@@ -132,37 +132,47 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  DropdownButton(
-                      value: dropdownvalue,
-                      onChanged: (String? newvalue) {
-                        setState(() {
-                          dropdownvalue = newvalue!;
-                          controllerpercent.text = '5.0 ';
-                        });
-                      },
-                      items: <String>[
-                        'Custom',
-                        'Beer',
-                        'Wine',
-                        'Shot',
-                        'Champagne',
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList()),
                   Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.white,
-                      ),
+                    height: 35,
+                    color: Colors.white,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton(
+                          iconSize: 22,
+                          style: Theme.of(context).textTheme.headline2,
+                          // dropdownColor: Colors.white,
+                          // focusColor: Colors.white,
+                          value: dropdownvalue,
+                          onChanged: (String? newvalue) {
+                            setState(() {
+                              dropdownvalue = newvalue!;
+                              suggestvalues(newvalue);
+                            });
+                          },
+                          items: <String>[
+                            'Custom',
+                            'Beer',
+                            'Wine',
+                            'Shot',
+                            'Champagne',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList()),
+                    ),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xffF6F4FB),
                     ),
                     height: 35,
                     //margin: const EdgeInsets.only(bottom: 10),
                     width: 75,
                     child: TextFormField(
+                      style: Theme.of(context).textTheme.headline2,
                       controller: controllerpercent,
                       decoration: const InputDecoration(
                         suffixText: '%',
@@ -170,19 +180,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
                   Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.white,
-                      ),
+                    decoration: const BoxDecoration(
+                      color: Color(0xffF6F4FB),
                     ),
+
                     height: 35,
                     //margin: const EdgeInsets.only(bottom: 10),
                     width: 75,
                     child: TextFormField(
+                      style: Theme.of(context).textTheme.headline2,
                       controller: controllervolume,
                       decoration: const InputDecoration(
                         suffixText: 'ml',
@@ -205,6 +212,22 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void suggestvalues(String newvalue) {
+    if (newvalue == 'Beer') {
+      controllerpercent.text = '5.0 ';
+      controllervolume.text = '500';
+    } else if (newvalue == 'Wine') {
+      controllerpercent.text = '13.0 ';
+      controllervolume.text = '175';
+    } else if (newvalue == 'Champagne') {
+      controllerpercent.text = '11.0 ';
+      controllervolume.text = '120';
+    } else if (newvalue == 'Shot') {
+      controllerpercent.text = '40.0';
+      controllervolume.text = '50';
+    }
   }
 
   frompicker() {
