@@ -30,7 +30,7 @@ class ThemeProvider {
               color: Color(0xffF6F4FB))),
       headline2: GoogleFonts.lato(
           textStyle: const TextStyle(
-              fontSize: 14.0,
+              fontSize: 16.0,
               fontWeight: FontWeight.bold,
               color: Color(0xff7046e0))),
       headline3: GoogleFonts.lato(
