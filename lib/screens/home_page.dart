@@ -15,18 +15,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final controllerpercent = TextEditingController();
   final controllervolume = TextEditingController();
+  final controllerweight = TextEditingController();
   final userinfo = UserData;
   List<Alcohols> currentAlcohols = [];
-
+  late DateTime untildate;
+  late DateTime fromdate;
   var select;
   String dropdownvalue = 'Custom';
-  String from = 'Od';
-  String until = 'Do';
+  var from = 'Od';
+  var until = 'Do';
 
   @override
   Widget build(BuildContext context) {
     List gender = ['women', 'men'];
-    TextEditingController controllerweight = TextEditingController();
 
     return Scaffold(
       backgroundColor: Color(0xff7046e0),
@@ -87,6 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headline2,
                   decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(
+                        bottom: 20 / 2,
+                      ),
                       suffixText: 'kg',
                       labelText: 'Waga',
                       labelStyle: Theme.of(context).textTheme.headline3),
@@ -102,12 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         onConfirm: (time) {
                           setState(() {
-                            from = DateFormat('dd-MM hh:mm').format(time);
+                            from = DateFormat('dd-MM HH:mm').format(time);
+                            fromdate = time;
                           });
                         },
                       );
                     },
-                    child: Text(from),
+                    child: Text(from,
+                        style: Theme.of(context).textTheme.headline1),
                   ),
                   const SizedBox(width: 8),
                   const Icon(Icons.arrow_forward, color: Colors.white),
@@ -118,12 +124,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         onConfirm: (time) {
                           setState(() {
-                            until = DateFormat('dd-MM hh:mm').format(time);
+                            until = DateFormat('dd-MM HH:mm').format(time);
+                            untildate = time;
                           });
                         },
                       );
                     },
-                    child: Text(until),
+                    child: Text(until,
+                        style: Theme.of(context).textTheme.headline1),
                   ),
                 ],
               ),
@@ -140,6 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButtonFormField(
                             decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                bottom: 35 / 2,
+                              ),
                               prefixIcon: Icon(
                                 FontAwesomeIcons.percent,
                                 color: Colors.black,
@@ -176,11 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Color(0xffF6F4FB),
                       ),
                       height: 35,
-                      //margin: const EdgeInsets.only(bottom: 10),
                       width: 65,
                       child: TextFormField(
-                        // textAlignVertical: TextAlignVertical.center,
-
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headline2,
                         controller: controllerpercent,
@@ -211,7 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(
+                        Icons.add,
+                        size: 30,
+                      ),
                       onPressed: () async {
                         currentAlcohols.add(Alcohols(
                             name: dropdownvalue,
@@ -223,7 +234,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-
+              ElevatedButton(
+                onPressed: () {
+                  calculateBAC(CalculationData(select, controllerweight.text,
+                      hoursBetween(fromdate, untildate), currentAlcohols));
+                },
+                child: Text(
+                  'Oblicz czas trzeźwienia',
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+              ),
               ListView.builder(
                   itemCount: currentAlcohols.length,
                   physics: const NeverScrollableScrollPhysics(),
@@ -253,6 +273,15 @@ class _HomeScreenState extends State<HomeScreen> {
       controllerpercent.text = '40.0';
       controllervolume.text = '50';
     }
+  }
+
+  double hoursBetween(DateTime from, DateTime to) {
+    from = DateTime(from.year, from.month, from.day, from.hour, from.minute);
+    to = DateTime(to.year, to.month, to.day, to.hour, to.minute);
+
+    double hours = (to.difference(from).inMinutes) / 60;
+
+    return hours;
   }
 
   frompicker() {
