@@ -4,6 +4,7 @@ import 'package:party_guardian/models/alcohol_model.dart';
 import 'package:party_guardian/models/userdata.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:party_guardian/screens/results_page.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -236,8 +237,22 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  calculateBAC(CalculationData(select, controllerweight.text,
-                      hoursBetween(fromdate, untildate), currentAlcohols));
+                  CalculationData calculationData = CalculationData(
+                      select,
+                      controllerweight.text,
+                      hoursBetween(fromdate, untildate),
+                      currentAlcohols,
+                      fromdate,
+                      untildate);
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => ResultPage(
+                                calcdata: calculationData,
+                                chartdata: chartdata(
+                                    fromdate, calculateBAC(calculationData)),
+                              ))));
                 },
                 child: Text(
                   'Oblicz czas trzeźwienia',
@@ -273,15 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
       controllerpercent.text = '40.0';
       controllervolume.text = '50';
     }
-  }
-
-  double hoursBetween(DateTime from, DateTime to) {
-    from = DateTime(from.year, from.month, from.day, from.hour, from.minute);
-    to = DateTime(to.year, to.month, to.day, to.hour, to.minute);
-
-    double hours = (to.difference(from).inMinutes) / 60;
-
-    return hours;
   }
 
   frompicker() {
