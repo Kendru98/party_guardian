@@ -24,55 +24,68 @@ class _ResultPageState extends State<ResultPage> {
         color: Colors.blue,
         child: Column(
           children: [
-            Text(
-              'Bac: ' '${calculateBAC(widget.calcdata)}',
-              style: TextStyle(fontSize: 20),
-            ),
-
             //wstaw wykres
             SfCartesianChart(
-                primaryXAxis: DateTimeAxis(),
-                series: <ChartSeries>[
-                  // Renders line chart
+              annotations: <CartesianChartAnnotation>[
+                CartesianChartAnnotation(
+                    x: MediaQuery.of(context).size.width / 1.5,
+                    y: 40,
+                    horizontalAlignment: ChartAlignment.near,
+                    verticalAlignment: ChartAlignment.center,
+                    widget: Column(
+                      children: <Widget>[
+                        Row(children: const [
+                          Icon(Icons.circle, color: Colors.red, size: 16),
+                          Text('Spożywanie', style: TextStyle()),
+                        ]),
+                        Row(children: const [
+                          Icon(Icons.circle, color: Colors.green, size: 16),
+                          Text('Trzeźwienie', style: TextStyle())
+                        ]),
+                      ],
+                    ))
+              ],
+              // coordinateUnit: CoordinateUnit.percentage,
+              // x: kIsWeb ? '95%' : '85%',
+              // y: kIsWeb
+              //     ? '19%'
+              //     : orientation == Orientation.portrait
+              //         ? '14%'
+              //         : '17%')
 
-                  LineSeries<ChartData, DateTime>(
-                      dataSource: widget.chartdata,
-                      xValueMapper: (ChartData chart, _) => chart.hour,
-                      yValueMapper: (ChartData chart, _) => chart.promile)
-                ])
+              title: ChartTitle(
+                text: 'Współczynnik BAC: '
+                    '${calculateBAC(widget.calcdata).toStringAsFixed(3)} %',
+              ),
+              // legend: Legend(
+              //     isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+              primaryXAxis: CategoryAxis(
+                  edgeLabelPlacement: EdgeLabelPlacement.shift,
+                  interval: 2,
+                  title: AxisTitle(text: 'Czas')),
+              primaryYAxis: NumericAxis(
+                  labelFormat: '{value} ‰',
+                  axisLine: const AxisLine(width: 0),
+                  majorTickLines:
+                      const MajorTickLines(color: Colors.transparent)),
+
+              series: <LineSeries<ChartData, String>>[
+                LineSeries<ChartData, String>(
+                  dataSource: widget.chartdata,
+                  xValueMapper: (ChartData chart, _) => chart.hour,
+                  yValueMapper: (ChartData chart, _) => chart.bac,
+                  pointColorMapper: (ChartData chart, _) => chart.lineColor,
+                  dataLabelMapper: (ChartData chart, _) => chart.labeltext,
+                  width: 2,
+
+                  // isVisibleInLegend: true,
+                  // legendItemText: 'Legenda',
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
 }
-
-// @override
-// Widget build(BuildContext context) {
-//   final List<SalesData> chartData = [
-//     SalesData(2010, 35),
-//     SalesData(2011, 28),
-//     SalesData(2012, 34),
-//     SalesData(2013, 32),
-//     SalesData(2014, 40)
-//   ];
-
-//   return Scaffold(
-//       body: Center(
-//           child: Container(
-//               child: SfCartesianChart(
-//                   primaryXAxis: DateTimeAxis(),
-//                   series: <ChartSeries>[
-//         // Renders line chart
-//         LineSeries<SalesData, DateTime>(
-//             dataSource: chartData,
-//             xValueMapper: (SalesData sales, _) => sales.year,
-//             yValueMapper: (SalesData sales, _) => sales.sales)
-//       ]))));
-// }
-
-// class SalesData {
-//   SalesData(this.year, this.sales);
-//   final DateTime year;
-//   final double sales;
-// }

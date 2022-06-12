@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,10 +38,11 @@ calculateBAC(CalculationData calculationData) {
   var weightgrams = double.parse(calculationData.weight) * 1000;
 
   double bac = (gramsofalcohol / (weightgrams * gendercost)) * 100;
-  // bacatime = bac - (calculationData.estimatedtime * 0.015);
-  log('${bac}BAC  ${gramsofalcohol}grams of alcohol');
+  log('${bac}BAC start ${gramsofalcohol}grams of alcohol');
+  // bac = bac - (calculationData.estimatedtime * 0.015);
+  // log('${bac}BAC  ${gramsofalcohol}grams of alcohol');
 
-  return bac; // * 10 => promile
+  return bac; // * 10 => bac // bac w momencie konca picia
 }
 
 //bac per hour *0,015 per hour gives chart
@@ -63,24 +65,23 @@ double hoursBetween(DateTime from, DateTime to) {
   return hours;
 }
 
-chartdata(DateTime from, double bac) {
-  double promile = bac * 10;
-  DateTime end = DateTime.now();
-
-  //double hours = (end.difference(from).inMinutes) / 60;
+chartdata(DateTime from, DateTime until, double bac) {
   List<ChartData> chartData = [];
-  Duration period = Duration(minutes: 60);
-  // for (var i = 0; i < hours; i++) {
-  //   chartData.add(ChartData(, promile));
-  //   promile = promile - (promile * 0.015);
-  // }
-  var current = from.add(period);
-  log('${current}' '${end}');
-  while (promile > 0.00) {
-    chartData.add(ChartData(current, promile));
-    promile = promile - (1 * 0.015);
+  Duration period = const Duration(hours: 1);
+  var current = from;
+  log('${current}');
+  while (bac > 0.00) {
+    if (current.isBefore(until)) {
+      chartData.add(ChartData('${DateFormat('HH:mm').format(current)}h',
+          bac * 10, Colors.red, 'Czas spożywania'));
+    } else {
+      chartData.add(ChartData('${DateFormat('HH').format(current)}h', bac * 10,
+          Colors.green, 'Czas trzeźwienia'));
+    }
+    //('MM-dd-yyyy HH:mm')
+    bac = bac - (1 * 0.015); // bac - (1 * 0.015);
     print(current);
-    print(promile);
+    print(bac);
     current = current.add(period);
   }
   return chartData;
@@ -88,7 +89,9 @@ chartdata(DateTime from, double bac) {
 }
 
 class ChartData {
-  ChartData(this.hour, this.promile);
-  final DateTime hour;
-  final double promile;
+  ChartData(this.hour, this.bac, this.lineColor, this.labeltext);
+  final String hour;
+  final double bac;
+  final Color? lineColor;
+  final String labeltext;
 }

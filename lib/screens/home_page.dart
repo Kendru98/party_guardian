@@ -250,8 +250,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                           builder: ((context) => ResultPage(
                                 calcdata: calculationData,
-                                chartdata: chartdata(
-                                    fromdate, calculateBAC(calculationData)),
+                                chartdata: chartdata(fromdate, untildate,
+                                    calculateBAC(calculationData)),
                               ))));
                 },
                 child: Text(
