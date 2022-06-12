@@ -29,7 +29,7 @@ class _ResultPageState extends State<ResultPage> {
               annotations: <CartesianChartAnnotation>[
                 CartesianChartAnnotation(
                     x: MediaQuery.of(context).size.width / 1.5,
-                    y: 40,
+                    y: 45,
                     horizontalAlignment: ChartAlignment.near,
                     verticalAlignment: ChartAlignment.center,
                     widget: Column(
@@ -60,9 +60,9 @@ class _ResultPageState extends State<ResultPage> {
               // legend: Legend(
               //     isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
               primaryXAxis: CategoryAxis(
-                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                  interval: 2,
-                  title: AxisTitle(text: 'Czas')),
+                edgeLabelPlacement: EdgeLabelPlacement.shift,
+                interval: 2,
+              ),
               primaryYAxis: NumericAxis(
                   labelFormat: '{value} ‰',
                   axisLine: const AxisLine(width: 0),

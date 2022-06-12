@@ -25,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String dropdownvalue = 'Custom';
   var from = 'Od';
   var until = 'Do';
-
+  bool frombool = false;
+  bool untilbool = false;
   @override
   Widget build(BuildContext context) {
     List gender = ['women', 'men'];
@@ -109,6 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           setState(() {
                             from = DateFormat('dd-MM HH:mm').format(time);
                             fromdate = time;
+                            frombool = true;
                           });
                         },
                       );
@@ -127,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           setState(() {
                             until = DateFormat('dd-MM HH:mm').format(time);
                             untildate = time;
+                            untilbool = true;
                           });
                         },
                       );
@@ -173,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'Custom',
                               'Beer',
                               'Wine',
-                              'Shot',
+                              'Vodka',
                               'Champagne',
                             ].map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
@@ -237,22 +240,27 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  CalculationData calculationData = CalculationData(
-                      select,
-                      controllerweight.text,
-                      hoursBetween(fromdate, untildate),
-                      currentAlcohols,
-                      fromdate,
-                      untildate);
+                  if (validation() == true) {
+                    CalculationData calculationData = CalculationData(
+                        select,
+                        controllerweight.text,
+                        hoursBetween(fromdate, untildate),
+                        currentAlcohols,
+                        fromdate,
+                        untildate);
 
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => ResultPage(
-                                calcdata: calculationData,
-                                chartdata: chartdata(fromdate, untildate,
-                                    calculateBAC(calculationData)),
-                              ))));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => ResultPage(
+                                  calcdata: calculationData,
+                                  chartdata: chartdata(fromdate, untildate,
+                                      calculateBAC(calculationData)),
+                                ))));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Uzupełnij wszystkie dane!')));
+                  }
                 },
                 child: Text(
                   'Oblicz czas trzeźwienia',
@@ -274,6 +282,40 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget buildList(BuildContext context, Alcohols alcoList) {
+    return ListTile(
+      leading: SizedBox(
+        width: 86,
+        child: Column(
+          children: [
+            chooseIcon(alcoList.name),
+            Text(
+              alcoList.name,
+              overflow: TextOverflow.clip,
+            ),
+          ],
+        ),
+      ),
+      title: Text('${alcoList.percent} %'),
+      subtitle: Text('${alcoList.volume} ml'),
+      trailing: IconButton(
+        onPressed: () {
+          currentAlcohols.remove(alcoList);
+          setState(() {});
+        },
+        icon: IconButton(
+            onPressed: () {
+              currentAlcohols.remove(alcoList);
+              setState(() {});
+            },
+            icon: const Icon(
+              FontAwesomeIcons.x,
+              color: Colors.red,
+            )),
+      ),
+    );
+  }
+
   void suggestvalues(String newvalue) {
     if (newvalue == 'Beer') {
       controllerpercent.text = '5.0 ';
@@ -284,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } else if (newvalue == 'Champagne') {
       controllerpercent.text = '11.0 ';
       controllervolume.text = '120';
-    } else if (newvalue == 'Shot') {
+    } else if (newvalue == 'Vodka') {
       controllerpercent.text = '40.0';
       controllervolume.text = '50';
     }
@@ -300,34 +342,30 @@ class _HomeScreenState extends State<HomeScreen> {
     return czas.toString();
   }
 
-  Widget buildList(BuildContext context, Alcohols alcoList) {
-    return ListTile(
-      leading: SizedBox(
-        width: 86,
-        child: Column(
-          children: [
-            const Icon(
-              FontAwesomeIcons.wineGlass,
-              size: 40,
-            ),
-            Text(
-              alcoList.name,
-              overflow: TextOverflow.clip,
-            ),
-          ],
-        ),
-      ),
-      title: Text('${alcoList.percent} %'),
-      subtitle: Text('${alcoList.volume} ml'),
-      trailing: IconButton(
-          onPressed: () {
-            currentAlcohols.remove(alcoList);
-            setState(() {});
-          },
-          icon: const Icon(
-            FontAwesomeIcons.x,
-            color: Colors.red,
-          )),
-    );
+  bool validation() {
+    if (currentAlcohols.isNotEmpty &&
+        controllerweight.text.isNotEmpty &&
+        frombool == true &&
+        untilbool == true &&
+        select != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  chooseIcon(String name) {
+    if (name == 'Beer') {
+      return Icon(
+        FontAwesomeIcons.beerMugEmpty,
+        size: 40,
+      );
+    } else if (name == 'Wine') {
+      return Icon(FontAwesomeIcons.wineGlass, size: 40);
+    } else if (name == 'Champagne') {
+      return Icon(FontAwesomeIcons.champagneGlasses, size: 40);
+    } else if (name == 'Vodka') {
+      return Icon(Icons.liquor_rounded, size: 40);
+    }
   }
 }

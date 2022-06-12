@@ -69,7 +69,7 @@ chartdata(DateTime from, DateTime until, double bac) {
   List<ChartData> chartData = [];
   Duration period = const Duration(hours: 1);
   var current = from;
-  log('${current}');
+
   while (bac > 0.00) {
     if (current.isBefore(until)) {
       chartData.add(ChartData('${DateFormat('HH:mm').format(current)}h',
@@ -78,14 +78,13 @@ chartdata(DateTime from, DateTime until, double bac) {
       chartData.add(ChartData('${DateFormat('HH').format(current)}h', bac * 10,
           Colors.green, 'Czas trzeźwienia'));
     }
-    //('MM-dd-yyyy HH:mm')
-    bac = bac - (1 * 0.015); // bac - (1 * 0.015);
+
+    bac = bac - (1 * 0.015);
     print(current);
     print(bac);
     current = current.add(period);
   }
   return chartData;
-  //bac - (calculationData.estimatedtime * 0.015);
 }
 
 class ChartData {
