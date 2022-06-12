@@ -21,7 +21,7 @@ class _ResultPageState extends State<ResultPage> {
     return Scaffold(
       appBar: AppBar(),
       body: Container(
-        color: Colors.blue,
+        color: Color(0xff7046e0),
         child: Column(
           children: [
             //wstaw wykres
@@ -29,18 +29,20 @@ class _ResultPageState extends State<ResultPage> {
               annotations: <CartesianChartAnnotation>[
                 CartesianChartAnnotation(
                     x: MediaQuery.of(context).size.width / 1.5,
-                    y: 45,
-                    horizontalAlignment: ChartAlignment.near,
-                    verticalAlignment: ChartAlignment.center,
+                    y: 52,
                     widget: Column(
                       children: <Widget>[
-                        Row(children: const [
-                          Icon(Icons.circle, color: Colors.red, size: 16),
-                          Text('Spożywanie', style: TextStyle()),
+                        Row(children: [
+                          const Icon(FontAwesomeIcons.minus,
+                              color: Colors.red, size: 24),
+                          Text('Spożywanie',
+                              style: Theme.of(context).textTheme.headline1),
                         ]),
-                        Row(children: const [
-                          Icon(Icons.circle, color: Colors.green, size: 16),
-                          Text('Trzeźwienie', style: TextStyle())
+                        Row(children: [
+                          const Icon(FontAwesomeIcons.minus,
+                              color: Colors.green, size: 24),
+                          Text('Trzeźwienie',
+                              style: Theme.of(context).textTheme.headline1)
                         ]),
                       ],
                     ))
@@ -54,6 +56,7 @@ class _ResultPageState extends State<ResultPage> {
               //         : '17%')
 
               title: ChartTitle(
+                textStyle: Theme.of(context).textTheme.headline1,
                 text: 'Współczynnik BAC: '
                     '${calculateBAC(widget.calcdata).toStringAsFixed(3)} %',
               ),
@@ -62,8 +65,10 @@ class _ResultPageState extends State<ResultPage> {
               primaryXAxis: CategoryAxis(
                 edgeLabelPlacement: EdgeLabelPlacement.shift,
                 interval: 2,
+                labelStyle: Theme.of(context).textTheme.headline1,
               ),
               primaryYAxis: NumericAxis(
+                  labelStyle: Theme.of(context).textTheme.headline1,
                   labelFormat: '{value} ‰',
                   axisLine: const AxisLine(width: 0),
                   majorTickLines:
@@ -76,13 +81,16 @@ class _ResultPageState extends State<ResultPage> {
                   yValueMapper: (ChartData chart, _) => chart.bac,
                   pointColorMapper: (ChartData chart, _) => chart.lineColor,
                   dataLabelMapper: (ChartData chart, _) => chart.labeltext,
-                  width: 2,
+                  width: 3,
 
                   // isVisibleInLegend: true,
                   // legendItemText: 'Legenda',
                 ),
               ],
-            )
+            ),
+            Text('Zacząłeś spożywać alkohol o ${widget.calcdata.startTime}\n'),
+            Text('Skończyłeś spożywać alkohol o ${widget.calcdata.endTime}\n'),
+            Text('Wytrzeźwiejesz o ${widget.chartdata.last.hour}\n'),
           ],
         ),
       ),
