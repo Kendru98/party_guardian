@@ -163,8 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             iconSize: 22,
                             style: Theme.of(context).textTheme.headline2,
-                            // dropdownColor: Colors.white,
-                            // focusColor: Colors.white,
                             value: dropdownvalue,
                             onChanged: (String? newvalue) {
                               setState(() {
