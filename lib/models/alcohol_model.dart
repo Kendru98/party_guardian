@@ -39,8 +39,6 @@ calculateBAC(CalculationData calculationData) {
 
   double bac = (gramsofalcohol / (weightgrams * gendercost)) * 100;
   log('${bac}BAC start ${gramsofalcohol}grams of alcohol');
-  // bac = bac - (calculationData.estimatedtime * 0.015);
-  // log('${bac}BAC  ${gramsofalcohol}grams of alcohol');
 
   return bac; // * 10 => bac // bac w momencie konca picia
 }
@@ -67,19 +65,19 @@ double hoursBetween(DateTime from, DateTime to) {
 
 chartdata(DateTime from, DateTime until, double bac) {
   List<ChartData> chartData = [];
-  Duration period = const Duration(hours: 1);
+  Duration period = const Duration(minutes: 6);
   var current = from;
 
   while (bac > 0.00) {
     if (current.isBefore(until)) {
-      chartData.add(ChartData('${DateFormat('HH:mm').format(current)}h',
-          bac * 10, Colors.red, 'Czas spożywania'));
+      chartData
+          .add(ChartData(current, bac * 10, Colors.red, 'Czas spożywania'));
     } else {
-      chartData.add(ChartData('${DateFormat('HH').format(current)}h', bac * 10,
-          Colors.green, 'Czas trzeźwienia'));
+      chartData
+          .add(ChartData(current, bac * 10, Colors.green, 'Czas trzeźwienia'));
     }
 
-    bac = bac - (1 * 0.015);
+    bac = bac - (0.10 * 0.015);
     print(current);
     print(bac);
     current = current.add(period);
@@ -89,7 +87,7 @@ chartdata(DateTime from, DateTime until, double bac) {
 
 class ChartData {
   ChartData(this.hour, this.bac, this.lineColor, this.labeltext);
-  final String hour;
+  final DateTime hour;
   final double bac;
   final Color? lineColor;
   final String labeltext;

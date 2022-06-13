@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:party_guardian/models/alcohol_model.dart';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class ResultPage extends StatefulWidget {
   final List<ChartData> chartdata;
@@ -17,7 +19,9 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPageState extends State<ResultPage> {
   @override
+  @override
   Widget build(BuildContext context) {
+    // final whensober = widget.chartdata.last.hour - DateTime.now();
     return Scaffold(
       appBar: AppBar(),
       body: Container(
@@ -26,6 +30,10 @@ class _ResultPageState extends State<ResultPage> {
           children: [
             //wstaw wykres
             SfCartesianChart(
+              trackballBehavior: TrackballBehavior(
+                  enable: true,
+                  tooltipSettings:
+                      InteractiveTooltip(enable: true, color: Colors.black)),
               annotations: <CartesianChartAnnotation>[
                 CartesianChartAnnotation(
                     x: MediaQuery.of(context).size.width / 1.5,
@@ -60,13 +68,17 @@ class _ResultPageState extends State<ResultPage> {
                 text: 'Współczynnik BAC: '
                     '${calculateBAC(widget.calcdata).toStringAsFixed(3)} %',
               ),
-              // legend: Legend(
-              //     isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
-              primaryXAxis: CategoryAxis(
+
+              primaryXAxis: DateTimeAxis(
+                dateFormat: DateFormat.Hm('pl').add_E(),
                 edgeLabelPlacement: EdgeLabelPlacement.shift,
-                interval: 2,
+                majorGridLines: const MajorGridLines(width: 0),
+                interval: 1,
                 labelStyle: Theme.of(context).textTheme.headline1,
+                interactiveTooltip: InteractiveTooltip(enable: true),
               ),
+              crosshairBehavior: CrosshairBehavior(
+                  enable: true, activationMode: ActivationMode.singleTap),
               primaryYAxis: NumericAxis(
                   labelStyle: Theme.of(context).textTheme.headline1,
                   labelFormat: '{value} ‰',
@@ -74,8 +86,8 @@ class _ResultPageState extends State<ResultPage> {
                   majorTickLines:
                       const MajorTickLines(color: Colors.transparent)),
 
-              series: <LineSeries<ChartData, String>>[
-                LineSeries<ChartData, String>(
+              series: <LineSeries<ChartData, DateTime>>[
+                LineSeries<ChartData, DateTime>(
                   dataSource: widget.chartdata,
                   xValueMapper: (ChartData chart, _) => chart.hour,
                   yValueMapper: (ChartData chart, _) => chart.bac,
@@ -88,9 +100,12 @@ class _ResultPageState extends State<ResultPage> {
                 ),
               ],
             ),
-            Text('Zacząłeś spożywać alkohol o ${widget.calcdata.startTime}\n'),
-            Text('Skończyłeś spożywać alkohol o ${widget.calcdata.endTime}\n'),
-            Text('Wytrzeźwiejesz o ${widget.chartdata.last.hour}\n'),
+            Text(
+                'Zacząłeś spożywać alkohol  ${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.calcdata.startTime)}.\n'),
+            Text(
+                'Skończyłeś spożywać alkohol  ${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.calcdata.endTime)}\n'),
+            Text(
+                'Wytrzeźwiejesz za ${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.chartdata.last.hour)}\n'),
           ],
         ),
       ),
