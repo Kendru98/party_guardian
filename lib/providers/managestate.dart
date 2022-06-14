@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:party_guardian/models/alcohol_model.dart';
 
 class Manage extends ChangeNotifier {
-  List<Alcohols> _AlcoholList = [];
+  final List<Alcohols> _AlcoholList = [];
 
-  get AlcoholList => _AlcoholList;
+  List<Alcohols> get AlcoholList {
+    return _AlcoholList;
+  }
 
   void addList(Alcohols value) {
     _AlcoholList.add(value);

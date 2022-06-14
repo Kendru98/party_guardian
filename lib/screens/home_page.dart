@@ -4,7 +4,9 @@ import 'package:party_guardian/models/alcohol_model.dart';
 import 'package:party_guardian/models/userdata.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:party_guardian/providers/managestate.dart';
 import 'package:party_guardian/screens/results_page.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -18,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final controllervolume = TextEditingController();
   final controllerweight = TextEditingController();
   final userinfo = UserData;
-  List<Alcohols> currentAlcohols = [];
+  //List<Alcohols> currentAlcohols = [];
   late DateTime untildate;
   late DateTime fromdate;
   var select;
@@ -29,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool untilbool = false;
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<Manage>(context);
     List gender = ['women', 'men'];
 
     return Scaffold(
@@ -226,11 +229,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         size: 30,
                       ),
                       onPressed: () async {
-                        currentAlcohols.add(Alcohols(
+                        provider.addList(Alcohols(
                             name: dropdownvalue,
                             percent: double.parse(controllerpercent.text),
                             volume: double.parse(controllervolume.text)));
-                        setState(() {});
                       },
                     ),
                   ],
@@ -243,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         select,
                         controllerweight.text,
                         hoursBetween(fromdate, untildate),
-                        currentAlcohols,
+                        Provider.of<Manage>(context, listen: false).AlcoholList,
                         fromdate,
                         untildate);
 
@@ -266,11 +268,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListView.builder(
-                  itemCount: currentAlcohols.length,
+                  itemCount: provider.AlcoholList.length,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: ((context, index) {
-                    final alcoList = currentAlcohols[index];
+                    final alcoList = provider.AlcoholList[index];
                     return buildList(context, alcoList);
                   })),
             ],
@@ -281,6 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildList(BuildContext context, Alcohols alcoList) {
+    var provider = Provider.of<Manage>(context);
     return ListTile(
       leading: SizedBox(
         width: 86,
@@ -298,18 +301,12 @@ class _HomeScreenState extends State<HomeScreen> {
       subtitle: Text('${alcoList.volume} ml'),
       trailing: IconButton(
         onPressed: () {
-          currentAlcohols.remove(alcoList);
-          setState(() {});
+          provider.removeList(alcoList); //.remove(alcoList);
         },
-        icon: IconButton(
-            onPressed: () {
-              currentAlcohols.remove(alcoList);
-              setState(() {});
-            },
-            icon: const Icon(
-              FontAwesomeIcons.x,
-              color: Colors.red,
-            )),
+        icon: const Icon(
+          FontAwesomeIcons.x,
+          color: Colors.red,
+        ),
       ),
     );
   }
@@ -341,7 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool validation() {
-    if (currentAlcohols.isNotEmpty &&
+    var provider = Provider.of<Manage>(context, listen: false);
+    if (provider.AlcoholList.isNotEmpty &&
         controllerweight.text.isNotEmpty &&
         frombool == true &&
         untilbool == true &&
