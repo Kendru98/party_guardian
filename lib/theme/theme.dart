@@ -36,6 +36,13 @@ class ThemeProvider {
       headline3: GoogleFonts.lato(
           textStyle: const TextStyle(
               fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.grey)),
+      headline4: GoogleFonts.lato(
+        textStyle: const TextStyle(
+            fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
+      headline5: GoogleFonts.lato(
+          textStyle: const TextStyle(
+              fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.grey)),
     ),
   );
 

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:party_guardian/models/alcohol_model.dart';
 
 class Manage extends ChangeNotifier {
-  String _select = '';
+  List<Alcohols> _AlcoholList = [];
 
-  String get select => _select;
+  get AlcoholList => _AlcoholList;
 
-  void setselect(String value) {
-    _select = value;
+  void addList(Alcohols value) {
+    _AlcoholList.add(value);
 
+    notifyListeners();
+  }
+
+  void removeList(Alcohols value) {
+    _AlcoholList.remove(value);
     notifyListeners();
   }
 }

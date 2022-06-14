@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:party_guardian/models/alcohol_model.dart';
-import 'dart:ffi';
-import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 class ResultPage extends StatefulWidget {
   final List<ChartData> chartdata;
   final CalculationData calcdata;
-  ResultPage({required this.chartdata, required this.calcdata});
+  const ResultPage(
+      {super.key, required this.chartdata, required this.calcdata});
 
   @override
   State<ResultPage> createState() => _ResultPageState();
@@ -19,9 +16,10 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPageState extends State<ResultPage> {
   @override
-  @override
   Widget build(BuildContext context) {
-    // final whensober = widget.chartdata.last.hour - DateTime.now();
+    final whensober =
+        widget.chartdata.last.hour.difference(DateTime.now()).inMinutes;
+
     return Scaffold(
       appBar: AppBar(),
       body: Container(
@@ -32,8 +30,8 @@ class _ResultPageState extends State<ResultPage> {
             SfCartesianChart(
               trackballBehavior: TrackballBehavior(
                   enable: true,
-                  tooltipSettings:
-                      InteractiveTooltip(enable: true, color: Colors.black)),
+                  tooltipSettings: const InteractiveTooltip(
+                      enable: true, color: Colors.black)),
               annotations: <CartesianChartAnnotation>[
                 CartesianChartAnnotation(
                     x: MediaQuery.of(context).size.width / 1.5,
@@ -55,20 +53,11 @@ class _ResultPageState extends State<ResultPage> {
                       ],
                     ))
               ],
-              // coordinateUnit: CoordinateUnit.percentage,
-              // x: kIsWeb ? '95%' : '85%',
-              // y: kIsWeb
-              //     ? '19%'
-              //     : orientation == Orientation.portrait
-              //         ? '14%'
-              //         : '17%')
-
               title: ChartTitle(
                 textStyle: Theme.of(context).textTheme.headline1,
                 text: 'Współczynnik BAC: '
                     '${calculateBAC(widget.calcdata).toStringAsFixed(3)} %',
               ),
-
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat.Hm('pl').add_E(),
                 edgeLabelPlacement: EdgeLabelPlacement.shift,
@@ -85,7 +74,6 @@ class _ResultPageState extends State<ResultPage> {
                   axisLine: const AxisLine(width: 0),
                   majorTickLines:
                       const MajorTickLines(color: Colors.transparent)),
-
               series: <LineSeries<ChartData, DateTime>>[
                 LineSeries<ChartData, DateTime>(
                   dataSource: widget.chartdata,
@@ -101,14 +89,42 @@ class _ResultPageState extends State<ResultPage> {
               ],
             ),
             Text(
-                'Zacząłeś spożywać alkohol  ${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.calcdata.startTime)}.\n'),
+              'Zacząłeś spożywać alkohol w ${DateFormat.E('pl').add_Hm().format(widget.calcdata.startTime)}.\n',
+              style: Theme.of(context).textTheme.headline4,
+            ),
             Text(
-                'Skończyłeś spożywać alkohol  ${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.calcdata.endTime)}\n'),
+              'Skończyłeś spożywać alkohol w ${DateFormat.E('pl').add_Hm().format(widget.calcdata.endTime)}\n',
+              style: Theme.of(context).textTheme.headline4,
+            ),
             Text(
-                'Wytrzeźwiejesz za ${DateFormat("yyyy-MM-dd HH:mm:ss").format(widget.chartdata.last.hour)}\n'),
+                'Wytrzeźwiejesz:  ${DateFormat.E('pl').add_Hm().format(widget.chartdata.last.hour)},${sobertext(whensober, widget.calcdata.endTime, widget.chartdata.last.hour)}',
+                style: Theme.of(context).textTheme.headline4,
+                textAlign: TextAlign.center),
+            Padding(
+              padding: const EdgeInsets.all(30),
+              child: Container(
+                margin: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1)),
+                child: Text(
+                  '*Wartości wyliczone w aplikacji mają jedynie charakter szacunkowy i nie powinny być przyjmowane jako rzeczywisty poziom stężenia alkoholu we krwi. Uzyskanie wyniku 0 nie oznacza trzeźwości.' +
+                      ' Aby uzyskać realne wyniki należy skorzystać z certyfkowanego alkomatu lub udać się na badanie w najbliższym komisariacie policji.',
+                  style: Theme.of(context).textTheme.headline5,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
           ],
         ),
       ),
     );
+  }
+}
+
+String sobertext(int difference, DateTime drinkend, DateTime sobertime) {
+  if (difference > 0 && sobertime.isAfter(DateTime.now())) {
+    return ' czyli za ${(difference / 60).ceil().toString().padLeft(2, "0")}:${(difference % 60)} h';
+  } else {
+    return ' czyli jesteś już trzeźwy!';
   }
 }
