@@ -6,6 +6,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:party_guardian/providers/managestate.dart';
 import 'package:party_guardian/screens/results_page.dart';
+import 'package:party_guardian/widgets/alcohol_listtile.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -273,39 +274,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   shrinkWrap: true,
                   itemBuilder: ((context, index) {
                     final alcoList = provider.AlcoholList[index];
-                    return buildList(context, alcoList);
+                    return AlcoholListTile(
+                        alcoList); // buildList(context, alcoList);
                   })),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildList(BuildContext context, Alcohols alcoList) {
-    var provider = Provider.of<Manage>(context);
-    return ListTile(
-      leading: SizedBox(
-        width: 86,
-        child: Column(
-          children: [
-            chooseIcon(alcoList.name),
-            Text(
-              alcoList.name,
-              overflow: TextOverflow.clip,
-            ),
-          ],
-        ),
-      ),
-      title: Text('${alcoList.percent} %'),
-      subtitle: Text('${alcoList.volume} ml'),
-      trailing: IconButton(
-        onPressed: () {
-          provider.removeList(alcoList); //.remove(alcoList);
-        },
-        icon: const Icon(
-          FontAwesomeIcons.x,
-          color: Colors.red,
         ),
       ),
     );
