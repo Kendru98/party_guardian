@@ -1,10 +1,6 @@
 import 'dart:developer';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Alcohols {
   final String name;
@@ -40,10 +36,9 @@ calculateBAC(CalculationData calculationData) {
   double bac = (gramsofalcohol / (weightgrams * gendercost)) * 100;
   log('${bac}BAC start ${gramsofalcohol}grams of alcohol');
 
-  return bac; // * 10 => bac // bac w momencie konca picia
+  return bac;
 }
 
-//bac per hour *0,015 per hour gives chart
 gramsofalcoholcount(List<Alcohols> alcohollist) {
   double allalcoholgrams = 0.00;
   alcohollist.asMap().forEach((index, value) {
@@ -78,8 +73,7 @@ chartdata(DateTime from, DateTime until, double bac) {
     }
 
     bac = bac - (0.10 * 0.015);
-    print(current);
-    print(bac);
+
     current = current.add(period);
   }
   return chartData;

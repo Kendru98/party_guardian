@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final controllervolume = TextEditingController();
   final controllerweight = TextEditingController();
   final userinfo = UserData;
-  //List<Alcohols> currentAlcohols = [];
+
   late DateTime untildate;
   late DateTime fromdate;
   var select;
@@ -325,16 +325,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   chooseIcon(String name) {
     if (name == 'Beer') {
-      return Icon(
+      return const Icon(
         FontAwesomeIcons.beerMugEmpty,
         size: 40,
       );
     } else if (name == 'Wine') {
-      return Icon(FontAwesomeIcons.wineGlass, size: 40);
+      return const Icon(FontAwesomeIcons.wineGlass, size: 40);
     } else if (name == 'Champagne') {
-      return Icon(FontAwesomeIcons.champagneGlasses, size: 40);
+      return const Icon(FontAwesomeIcons.champagneGlasses, size: 40);
     } else if (name == 'Vodka') {
-      return Icon(Icons.liquor_rounded, size: 40);
+      return const Icon(Icons.liquor_rounded, size: 40);
     }
   }
 }
